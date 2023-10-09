@@ -1,82 +1,82 @@
-const readlineSync = require("readline-sync");
+const readlineSync = require('readline-sync');
 
-//desclarion del odjeto tarea
-const tasks = {
-  id : id,
-  description : description,
-  estado : estado,
-};
+const tasks = {};
+
+let taskId = 1;
 
 function listTasks() {
-  if(tasks.length === 0){
-    console.log("\nLa lista de tareas esta vacia. por favor Ingresar tareas");
+  if (Object.keys(tasks).length === 0) {
+    console.log('La lista de tareas está vacía. por favor agregar una tarea');
     addTask();
-  }else {
-     console.log("\nLista de tareas:");
-      tasks.forEach((task, index) => {
-        const status = task.completada ? "Completada" : "Pendiente";
-        console.log(`${index + 1}. [${status}] - ${task.descripcion}`); 
-    });
+  } else {
+    console.log('Lista de tareas:');
+    for (const taskId in tasks) {
+      const task = tasks[taskId];
+      const status = task.estado ? 'Completada' : 'No completada';
+      console.log(`${task.id}. [${status}] ${task.descripcion}`);
+    }
   }
 }
 
 function addTask() {
-  const descripcion = readlineSync.question("Escribe la descripcion de la tarea:");
-    tasks.push({ descripcion, completada: false });
-    console.log("Tarea añadida con éxito.");
+  const descripcion = readlineSync.question('Escribe la descripción de la tarea: ');
+  const task = {
+    id: taskId++,
+    descripcion,
+    estado: false,
+  };
+  tasks[task.id] = task;
+  console.log('Tarea agregada correctamente.');
 }
 
-function deleteTask() {
+function removeTask() {
   listTasks();
-  const index = readlineSync.question("\nEscribe el nuemro de la tarea que deseas eliminar:");
-    if (index >= 1 && index <= tasks.length) {
-      tasks.splice(index-1, 1);
-      console.log("Tarea eliminada con éxito.");
-    } else {
-      console.log("Numero de la tarea no válido.!!!!!");
-      deleteTask();
-    }
+  const taskId = readlineSync.question('Escribe el ID de la tarea que quieres eliminar: ');
+  if (tasks[taskId]) {
+    delete tasks[taskId];
+    console.log('Tarea eliminada correctamente.');
+  } else {
+    console.log('ID de tarea inválido.');
+  }
 }
 
 function completeTask() {
   listTasks();
-  const index = readlineSync.question("Que tarea es la que deseas completar: ");
-    if (index >= 1 && index <= tasks.length) {
-      tasks[index-1].completada = true;
-      console.log("Tarea completada.");
-    } else {
-      console.log("Índice no válido.");
-      completeTask();
-    }
+  const taskId = readlineSync.question('Escribe el ID de la tarea que has completado: ');
+  if (tasks[taskId]) {
+    tasks[taskId].estado = true;
+    console.log('Tarea marcada como completada.');
+  } else {
+    console.log('ID de tarea inválido.');
+  }
 }
-while (true){
-  console.log("\n\n!Bienvenido a la aplicacion de gestion de tareas");
-  console.log("\nAcciones Dispanobes");
-  console.log("1. Listar Tareas");
-  console.log("2. Agregar Tareas");
-  console.log("3. Eliminar Tareas");
-  console.log("4. Marcar Tareas como completadas");
-  console.log("5. Salir");
 
-const choice = readlineSync.question("Escriba el numero de la accion que desea realizar: ");
+while (true) {
+  console.log('\nAcciones disponibles:');
+  console.log('1. Listar tareas');
+  console.log('2. Agregar tarea');
+  console.log('3. Eliminar tarea');
+  console.log('4. Marcar tarea como completada');
+  console.log('5. Salir');
+
+  const choice = readlineSync.question('Escribe el numero de la accion que deseas realizar: ');
+
   switch (choice) {
-    case "1":
+    case '1':
       listTasks();
       break;
-    case "2":
+    case '2':
       addTask();
       break;
-    case "3":
-      deleteTask();
+    case '3':
+      removeTask();
       break;
-    case "4":
+    case '4':
       completeTask();
       break;
-    case "5":
-      process.exit(0);
-      break;
+    case '5':
+      process.exit(0); // Salir del programa
     default:
-      console.log("Opcion Invalida. Por favor, elija una opcion valida.");
-    }
+      console.log('Opción inválida. Por favor, elige una acción válida.');
+  }
 }
-
